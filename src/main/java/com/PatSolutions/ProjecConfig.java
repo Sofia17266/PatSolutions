@@ -7,11 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.web.servlet.LocaleResolver;
@@ -20,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
 
 @Configuration
 public class ProjecConfig implements WebMvcConfigurer {
@@ -48,38 +44,39 @@ public class ProjecConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registro) {
-        registro.addViewController("/").setViewName("index");
-        registro.addViewController("/index").setViewName("index");
-        registro.addViewController("/login").setViewName("login");
-        registro.addViewController("/registro/nuevo").setViewName("/registro/nuevo");
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("index");
+        registry.addViewController("/index").setViewName("index");
+        registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/registro/nuevo").setViewName("/registro/nuevo");
+        registry.addViewController("/campos-disponibles").setViewName("campos"); // Asegúrate de que esta vista existe
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((request) -> request
-                .requestMatchers("/", "/index", "/js/**", "/webjars/**")
+                .requestMatchers("/", "/index", "/js/**", "/webjars/**", "/SC-403Lec15_ProyectoBaseVT/**")
                 .permitAll()
                 .requestMatchers("/categoria/listado", "/producto/listado")
                 .hasRole("VENDEDOR")
-                .requestMatchers("/categoria/nuevo ", "/categoria/modificar/**", "/categoria/eliminar/**", "/categoria/guardar",
+                .requestMatchers("/categoria/nuevo", "/categoria/modificar/**", "/categoria/eliminar/**", "/categoria/guardar",
                         "/producto/nuevo", "/producto/modificar/**", "/producto/eliminar/**", "/producto/guardar",
                         "/pruebas/**")
                 .hasRole("ADMIN")
+                .requestMatchers("/campos-disponibles") // Asegúrate de que esta ruta esté permitida
+                .permitAll()
         )
                 .formLogin((form) -> form.loginPage("/login").permitAll())
                 .logout((logout) -> logout.permitAll());
         return http.build();
     }
 
-@Autowired
-private UserDetailsService userDetailsService ;
-    
     @Autowired
-public void configurerGlobal(AuthenticationManagerBuilder builder) throws Exception{
-        builder.userDetailsService(userDetailsService)
-                .passwordEncoder(
-                new BCryptPasswordEncoder());
-    }
+    private UserDetailsService userDetailsService;
 
-} 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
+        builder.userDetailsService(userDetailsService)
+                .passwordEncoder(new BCryptPasswordEncoder());
+    }
+}

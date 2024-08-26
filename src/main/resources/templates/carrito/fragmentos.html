@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head th:replace="~{layout/plantilla :: head}">
+        <title>PatSolutions</title>
+    </head>
+    <body>
+        <div class="row row-cols-1">
+            <div class="card p-2" th:each="productos : ${productos}">                   
+                <div class="card-header">
+                    <h4>[[${productos.marca}]]</h4>
+                </div>
+                <div class="card-body">
+                    <p>[[#{producto.precio}]]</p>
+                    <h4>[[${productos.precio}]]</h4>
+                </div>
+                <div class="card-body">
+                    <p>[[${productos.transmision}]]</p>
+                </div>
+                <figure>
+                    <img src="${productos.ruta_imagen}" width="200" height="200"/>
+                </figure>
+            </div>
+        </div>
+
+        <section th:fragment="listadoProductos">
+
+            <div class="row row-cols-1">
+                <div class="card p-2" th:each="productos : ${productos}">                   
+                    <div class="card-header">
+                        <h4>[[${productos.marca}]]</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>[[#{producto.precio}]]</p>
+                        <h4>[[${productos.precio}]]</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>[[${productos.transmision}]]</p>
+                    </div>
+                    <figure>
+                        <img src="${producto.ruta_imagen}" width="200" height="200"/>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <div th:fragment="verCarrito" th:unless="${#lists.isEmpty(listaItems)}">            
+            <form action="/carrito/listado">
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+                    <i class="fas fa-cart-plus"></i>
+                    [[#{carrito.verCarrito}]] [[${listaTotal}]]
+                </button>
+            </form>
+        </div>     
+
+
+
+        <section th:fragment="Carousel">  
+
+            <div id="carouselExample" class="carousel slide" >
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://www.autodetective.com/uploads/photos/hyundai/elantra/2018/1662647.jpg" width="1500" height="600" alt="..." class="d-block mx-auto " >
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://media.es.wired.com/photos/64f25753c71adbd96335d9e1/16:9/w_2560%2Cc_limit/Lexus-LC500h-1-scaled.jpeg" width="1500" height="600" alt="..." class="d-block mx-auto" >
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoBJbskPEBZ0ZzVtM-lDppo7jPlYlaRviwoA&s" width="1500" height="600" alt="..." class="d-block mx-auto" >
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+
+
+                <button class="btn btn-warning text-primary btn-lg d-block mx-auto" onclick="window.location.href = 'pruebas/listado2';" type="button">[[#{catalogo.catologo1}]]</button>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-6 text-center">
+                            <button id="mostrarMapaBtn" class="btn btn-primary" onclick="mostrarMapa()">[[#{catalogo.catologo2}]]</button>
+                        </div>
+                    </div>
+                    <div id="mapContainer" class="row justify-content-center mt-3" style="display: none;">
+                        <div class="col-8 text-center">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.3054196235207!2d-84.1461592886302!3d9.991610473136282!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0faf89f62fc53%3A0x920a942930d65331!2sUniversidad%20Fid%C3%A9litas%20Heredia!5e0!3m2!1ses-419!2scr!4v1712271002486!5m2!1ses-419!2scr" width="1300" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function mostrarMapa() {
+                        document.getElementById('mapContainer').style.display = 'block';
+                    }
+                </script>
+
+
+
+
+        </section>
+
+        <section th:fragment="Popular"
+
+
+                 <div class="container">
+                <style>
+                    .car {
+                        background-color: buttonhighlight;
+                        color: black;
+                        padding: 20px;
+                    }
+                </style>
+                <p class="popular-text text-center" style="font-weight: bold; font-size: 24px;">GRACIAS POR PREFERIRNOS</p>
+                
+
+                
+        </section>
+        
+    </body>
+</html>

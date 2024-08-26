@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{title}">PatSolutions - Campos Disponibles</title>
+    <th:block th:replace="layout/plantilla :: head"></th:block>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header th:replace="layout/plantilla :: header"></header>
+
+    <div class="container">
+        <h1 th:text="#{header.title}">Campos Disponibles para Parquear</h1>
+        <div class="row">
+            <!-- Tabla de campos disponibles -->
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h4 th:text="#{header.title}">Lista de Campos</h4>
+                    </div>
+                    <div th:if="${camposDisponibles != null and !camposDisponibles.empty}">
+                        <table class="table table-striped table-hover table-sm">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="font-size: 16px; font-weight: bold;" th:text="#{table.header.number}">#</th>
+                                    <th style="font-size: 16px; font-weight: bold;" th:text="#{table.header.fieldName}">Nombre del Campo</th>
+                                    <th style="font-size: 16px; font-weight: bold;" class="text-center" th:text="#{table.header.status}">Estado</th>
+                                    <th style="font-size: 16px; font-weight: bold;" class="text-center" th:text="#{table.header.actions}">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="campo, iterStat : ${camposDisponibles}">
+                                    <td th:text="${iterStat.count}"></td>
+                                    <td th:text="${campo.nombre}"></td>
+                                    <td class="text-center">
+                                        <span th:if="${campo.disponible}" class="badge bg-success" th:text="#{status.available}">Disponible</span>
+                                        <span th:if="${!campo.disponible}" class="badge bg-danger" th:text="#{status.occupied}">Ocupado</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <button th:if="${campo.disponible}" class="btn btn-primary" 
+                                                onclick="mostrarModal(${campo.id})">
+                                            <i class="fas fa-parking"></i> <span th:text="#{button.park}">Parquear</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center p-2" th:if="${camposDisponibles == null or camposDisponibles.empty}">
+                        <span th:text="#{table.noAvailable}">No hay campos disponibles.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de total de campos disponibles -->
+            <div class="col-md-3">
+                <div class="card text-center bg-dark text-white mb-3">
+                    <div class="card-body">
+                        <h3 th:text="#{total.availableSpots}">Total de Campos Disponibles</h3>
+                        <h4 class="fs-2"><i class="fas fa-car"></i> 
+                            <span th:text="${camposDisponibles.size()}">0</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="layout/plantilla :: footer"></footer>
+
+    <!-- Modal para ingresar los detalles del vehículo -->
+    <div class="modal fade" id="parquearModal" tabindex="-1" role="dialog" aria-labelledby="parquearModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="parquearModalLabel" th:text="#{modal.title}">Datos del Vehículo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="parquearForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="campoId" name="campoId">
+                        <div class="form-group">
+                            <label for="marca" th:text="#{modal.label.brand}">Marca</label>
+                            <input type="text" class="form-control" id="marca" name="marca" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modelo" th:text="#{modal.label.model}">Modelo</label>
+                            <input type="text" class="form-control" id="modelo" name="modelo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ano" th:text="#{modal.label.year}">Año</label>
+                            <input type="number" class="form-control" id="ano" name="ano" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cilindrada" th:text="#{modal.label.cylinderCapacity}">Cilindrada</label>
+                            <input type="text" class="form-control" id="cilindrada" name="cilindrada" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria" th:text="#{modal.label.category}">Categoría</label>
+                            <select class="form-control" id="categoria" name="categoria" required>
+                                <option value="sedan">Sedán</option>
+                                <option value="suv">SUV</option>
+                                <option value="pickup">Pickup</option>
+                                <option value="motocicleta">Motocicleta</option>
+                                <!-- Agrega más opciones según sea necesario -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{modal.button.cancel}">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{modal.button.park}">Parquear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para manejar la funcionalidad de "Parquear" -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function mostrarModal(idCampo) {
+            $('#campoId').val(idCampo);
+            $('#parquearModal').modal('show');
+        }
+
+        $('#parquearForm').on('submit', function(event) {
+            event.preventDefault();
+            let formData = $(this).serialize();
+            
+            fetch('/parquear', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData,
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al parquear el vehículo');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Error al parquear el vehículo');
+            });
+        });
+    </script>
+</body>
+</html>
